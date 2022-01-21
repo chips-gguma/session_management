@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.ConcurrentSessionFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.http.HttpSessionEvent;
@@ -26,6 +28,9 @@ import java.time.LocalDateTime;
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    ConcurrentSessionFilter concurrentSessionFilter;
+    SessionAuthenticationStrategy strategy;
 
     private final SpUserService spUserService;
     private final DataSource dataSource;
@@ -118,6 +123,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .rememberMe(r->r
                         .rememberMeServices(rememberMeServices())
+                )
+                // 기존 것을 두고 새로운 것을 expired 시킬 지 기존 것을 expired 시키고 새로운 것을 받아들일 지
+                .sessionManagement(
+                        s->s
+                                .maximumSessions(1) // 동시에 한 user 당 한 session만 허용
+                                .maxSessionsPreventsLogin(false) // 디폴트, 기존 session 만료
+                                .expiredUrl("/session-expired") // 만료되었을 때 /session-expired로 이동
                 )
                 ;
     }

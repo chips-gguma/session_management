@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -79,6 +81,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             }
         });
     }
+
+    @Bean
+    SessionRegistry sessionRegistry() {
+        SessionRegistryImpl registry = new SessionRegistryImpl();
+        return registry;
+    }
+
 
     @Bean
     PersistentTokenRepository tokenRepository(){

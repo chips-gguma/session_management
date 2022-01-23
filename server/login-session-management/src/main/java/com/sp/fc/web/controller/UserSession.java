@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,6 +14,9 @@ import lombok.NoArgsConstructor;
 public class UserSession {
 
     private String username;
-    private List<SessionInfo> sessions;
+    private List<SessionInfo> sessions; // 세션 정보 목록
 
+    public int getCount() {
+        return sessions.size();
+    }
 }

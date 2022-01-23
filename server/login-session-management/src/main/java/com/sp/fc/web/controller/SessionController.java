@@ -1,5 +1,6 @@
 package com.sp.fc.web.controller;
 
+import com.sp.fc.user.domain.SpUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,14 @@ public class SessionController {
     public String sessions(Model model) { // sessionList page 에 넘김
         // userSession 에 principal 를 받아서 mapping
         model.addAttribute("sessionList", sessionRegistry.getAllPrincipals().stream().map(p->UserSession.builder()
-                .build()).collect(Collectors.toList()));
+                .username(((SpUser)p).getUsername()) // SpUser 에서 user 이름을 받음
+                .sessions(sessionRegistry.getAllSessions(p, false).stream().map(s-> // pricipal 로 getAllsessions 만료된 것 말고 살아있는 session 만 가져옴
+                        SessionInfo.builder()
+                                .sessionId(s.getSessionId())
+                                .time(s.getLastRequest())
+                                .build())
+                        .collect(Collectors.toList()))
+                .build()).collect(Collectors.toList())); // UserSession 에 sessions 리스트가 주입 됨
         return "/sessionList";
     }
 

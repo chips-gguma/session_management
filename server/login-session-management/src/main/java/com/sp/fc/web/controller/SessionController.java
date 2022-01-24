@@ -2,10 +2,13 @@ package com.sp.fc.web.controller;
 
 import com.sp.fc.user.domain.SpUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.stream.Collectors;
 
@@ -30,9 +33,14 @@ public class SessionController {
         return "/sessionList";
     }
 
-    @GetMapping("/session/expire")
-    public String expireSession(String sessionId) {
-        return "redirect:/session";
+    @PostMapping("/session/expire")
+    public String expireSession(@RequestParam String sessionId) {
+        // expire code
+        SessionInformation sessionInformation = sessionRegistry.getSessionInformation(sessionId);
+        if(!sessionInformation.isExpired()) {
+            sessionInformation.expireNow();
+        }
+        return "redirect:/sessions"; // 살아있는 session만 나타남
     }
 
     public String sessionExpired() {

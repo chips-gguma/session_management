@@ -147,6 +147,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
+                // 권한이 없더라도 모니터링
+                .antMatchers("/sessions", "/session/expire", "/session-expired") // 웹 리소스로 등록
                 .requestMatchers(
                         PathRequest.toStaticResources().atCommonLocations(),
                         PathRequest.toH2Console()

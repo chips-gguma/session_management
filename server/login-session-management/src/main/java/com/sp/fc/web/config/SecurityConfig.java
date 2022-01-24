@@ -108,6 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         spUserService,
                         tokenRepository()
                         );
+        service.setAlwaysRemember(true);
         return service;
     }
 
@@ -115,7 +116,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(request->
-                    request.antMatchers("/").permitAll()
+                    request.antMatchers("/", "/resources/**", "/error").permitAll()
                             .anyRequest().authenticated()
                 )
                 .formLogin(login->
